@@ -1,7 +1,9 @@
 package com.carfax.service;
 
+import com.carfax.model.Listing;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -22,6 +24,7 @@ public class ContentManagerTest {
   @Test
   void testGetContent() throws JsonMappingException, JsonProcessingException {
     String model = "coro";
-    contentManager.getListings(model);
+    List<Listing> listings = contentManager.getListings(model);
+    listings.forEach(listing -> log.info(listing.toString()));
   }
 }

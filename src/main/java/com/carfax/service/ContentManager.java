@@ -10,13 +10,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 /** ContentManager */
+@Component
 public class ContentManager {
   Logger log = LoggerFactory.getLogger(ContentManager.class);
 
@@ -40,24 +43,29 @@ public class ContentManager {
 
     if (content.isPresent()) {
       String body = content.get();
-      // log.info(body);
 
       ObjectMapper mapper = new ObjectMapper();
       JsonNode root = mapper.readTree(body);
       JsonNode totalPageCountTmp = root.get("totalPageCount");
       JsonNode listingsTmp = root.get("listings");
 
-      this.filterListings(listingsTmp, model);
+      listings.addAll(this.filterListings(listingsTmp, model));
 
-      // int totalPageCount = totalPageCountTmp.intValue();
-      // log.info("totalPageCount: " + totalPageCount);
+      int totalPageCount = totalPageCountTmp.intValue();
+      log.info("totalPageCount: " + totalPageCount);
 
-      // for (int i = 2; i <= totalPageCount; i++) {
-      //   final Optional<String> tmpContent = this.getJSONContent(URL + "&page=" + i);
-      // }
+      for (int i = 2; i <= totalPageCount; i++) {
+        final Optional<String> tmpContent = this.getJSONContent(URL + "&page=" + i);
+        String tmpBody = tmpContent.get();
+        ObjectMapper tmpMapper = new ObjectMapper();
+        JsonNode tmpRoot = tmpMapper.readTree(tmpBody);
+        JsonNode tmpListings = tmpRoot.get("listings");
+
+        listings.addAll(this.filterListings(tmpListings, model));
+      }
     }
 
-    return null;
+    return listings;
   }
 
   private List<Listing> filterListings(final JsonNode listings, final String model) {
@@ -71,12 +79,14 @@ public class ContentManager {
 
       Predicate<JsonNode> maxMileage = listing -> listing.get("mileage").asInt() < 100_000;
 
-      StreamSupport.stream(iterable.spliterator(), false)
-          .filter(byModel)
-          .filter(minYear)
-          .filter(maxMileage)
-          .map(mapToListing)
-          .forEach(element -> log.info("Filtered Element: " + element));
+      List<Listing> listingsLst =
+          StreamSupport.stream(iterable.spliterator(), false)
+              .filter(byModel)
+              .filter(minYear)
+              .filter(maxMileage)
+              .map(mapToListing)
+              .collect(Collectors.toList());
+      return listingsLst;
     }
     return null;
   }
