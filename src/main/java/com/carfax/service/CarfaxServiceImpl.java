@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -17,10 +16,9 @@ import org.springframework.stereotype.Service;
 public class CarfaxServiceImpl implements CarfaxService {
 
   Logger log = LoggerFactory.getLogger(CarfaxServiceImpl.class);
-  private ContentManager contentManager;
+  private final ContentManager contentManager;
 
-  @Autowired
-  public void setContentManager(final ContentManager contentManager) {
+  public CarfaxServiceImpl(final ContentManager contentManager) {
     this.contentManager = contentManager;
   }
 

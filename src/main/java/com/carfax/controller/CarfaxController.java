@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /** GreetingController */
 @RestController
-@RequestMapping("carfax-wrapper")
+@RequestMapping("/api/bestListings")
 public class CarfaxController {
 
   Logger log = LoggerFactory.getLogger(CarfaxController.class);
@@ -26,8 +26,8 @@ public class CarfaxController {
     this.carfaxService = carfaxService;
   }
 
-  @GetMapping(value = "/listings", produces = "application/json")
-  public List<Listing> listings(
+  @GetMapping(value = "", produces = "application/json")
+  public List<Listing> getBestListings(
       @RequestParam(value = "model", defaultValue = "corolla") String model)
       throws JsonMappingException, JsonProcessingException {
 
