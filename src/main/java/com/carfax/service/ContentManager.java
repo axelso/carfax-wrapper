@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -76,14 +77,20 @@ public class ContentManager {
           listing -> listing.get("model").asText().toLowerCase().contains(model.toLowerCase());
 
       Predicate<JsonNode> minYear = listing -> listing.get("year").asInt() > 2015;
-
       Predicate<JsonNode> maxMileage = listing -> listing.get("mileage").asInt() < 100_000;
+      Predicate<JsonNode> isMileageInRange =
+          listing -> {
+            var currentYear = Year.now().getValue();
+            var expectedMileage = (currentYear - listing.get("year").asInt()) * 18000;
+            return listing.get("mileage").asInt() < expectedMileage;
+          };
 
       List<Listing> listingsLst =
           StreamSupport.stream(iterable.spliterator(), false)
               .filter(byModel)
               .filter(minYear)
               .filter(maxMileage)
+              .filter(isMileageInRange)
               .map(mapToListing)
               .collect(Collectors.toList());
       return listingsLst;
