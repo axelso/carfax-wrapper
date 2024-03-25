@@ -27,16 +27,21 @@ public class ContentManager {
   private static final String URL =
       "https://helix.carfax.com/search/v2/vehicles?zip=78759&radius=50&sort=BEST&vehicleCondition=USED&noAccidents=true&personalUse=true&serviceRecords=true&bodyType=Sedan&valueBadges=GOOD,GREAT&dynamicRadius=false&urlInfo=Used-Sedans-Austin-TX_bt7_c7537&bodytypes=Sedan&priceMax=20000";
 
+  private final RestTemplate restTemplate;
+
+  public ContentManager(RestTemplate restTemplate) {
+    this.restTemplate = restTemplate;
+  }
+
   public Optional<String> getJSONContent(final String url)
       throws JsonMappingException, JsonProcessingException {
-    RestTemplate restTemplate = new RestTemplate();
 
     ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
     return Optional.ofNullable(response.getBody());
   }
 
-  public List<Listing> getListings(final String model)
+  public List<Listing> getBestListings(final String model)
       throws JsonMappingException, JsonProcessingException {
 
     final Optional<String> content = this.getJSONContent(URL);

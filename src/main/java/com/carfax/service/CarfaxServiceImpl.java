@@ -10,7 +10,6 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-/** CarfaxServiceImpl */
 @CacheConfig(cacheNames = "carfax-listings")
 @Service
 public class CarfaxServiceImpl implements CarfaxService {
@@ -27,6 +26,6 @@ public class CarfaxServiceImpl implements CarfaxService {
       throws JsonMappingException, JsonProcessingException {
 
     log.info("Data is retrieved from helix-carfax rest api");
-    return contentManager.getListings(model);
+    return contentManager.getBestListings(model);
   }
 }

@@ -8,23 +8,26 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.client.RestTemplate;
 
-/** ContentManagerTest */
 public class ContentManagerTest {
 
   Logger log = LoggerFactory.getLogger(ContentManagerTest.class);
 
-  static ContentManager contentManager;
+  private static RestTemplate restTemplate;
+
+  private static ContentManager contentManager;
 
   @BeforeAll
   static void setup() {
-    contentManager = new ContentManager();
+    restTemplate = new RestTemplate();
+    contentManager = new ContentManager(restTemplate);
   }
 
   @Test
-  void testGetContent() throws JsonMappingException, JsonProcessingException {
+  void testGetBestListings() throws JsonMappingException, JsonProcessingException {
     String model = "coro";
-    List<Listing> listings = contentManager.getListings(model);
+    List<Listing> listings = contentManager.getBestListings(model);
     listings.forEach(listing -> log.info(listing.toString()));
   }
 }
