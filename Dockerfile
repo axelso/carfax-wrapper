@@ -1,4 +1,4 @@
 FROM openjdk:17-jdk-alpine
 COPY carfax-wrapper-1.0-SNAPSHOT.jar carfax-wrapper-1.0-SNAPSHOT.jar
-EXPOSE 8086
+EXPOSE 8080
 ENTRYPOINT ["java","-jar","/carfax-wrapper-1.0-SNAPSHOT.jar"]
